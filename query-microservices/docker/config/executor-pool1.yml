@@ -1,34 +1,4 @@
-logging:
-  level:
-    root: DEBUG
-    datawave.query: DEBUG
-    datawave.microservice.query: DEBUG
-
-spring:
-  cloud:
-    bus:
-      id: executor-pool1
-
-warehouse:
-  accumulo:
-    zookeepers: '${accumulo.zookeepers}'
-    instanceName: '${accumulo.instanceName}'
-    username: '${accumulo.username}'
-    password: '${accumulo.password}'
-
 datawave:
-
-  table:
-    cache:
-      zookeepers: '${accumulo.zookeepers}'
-      tableNames:
-        - '${warehouse.tables.metadata.name}'
-      poolName: 'default'
-      reloadInterval: 360000
-      evictionReaperIntervalInSeconds: 360
-      numLocks: 3
-      maxRetries: 3
-
   connection:
     factory:
       defaultPool: "default"

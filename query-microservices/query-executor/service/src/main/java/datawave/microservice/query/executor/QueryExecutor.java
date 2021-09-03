@@ -9,9 +9,7 @@ import datawave.microservice.query.executor.config.ExecutorProperties;
 import datawave.microservice.query.logic.QueryLogicFactory;
 import datawave.microservice.query.remote.QueryRequest;
 import datawave.microservice.query.remote.QueryRequestHandler;
-import datawave.microservice.query.remote.event.listener.QueryRemoteRequestEventListener;
 import datawave.microservice.query.storage.QueryQueueManager;
-import datawave.microservice.query.storage.QueryState;
 import datawave.microservice.query.storage.QueryStatus;
 import datawave.microservice.query.storage.QueryStorageCache;
 import datawave.microservice.query.storage.QueryTask;
@@ -19,13 +17,10 @@ import datawave.microservice.query.storage.TaskKey;
 import datawave.microservice.query.storage.TaskStates;
 import datawave.webservice.common.connection.AccumuloConnectionFactory;
 import datawave.webservice.query.runner.AccumuloConnectionRequestMap;
-import org.apache.accumulo.core.client.Connector;
 import org.apache.log4j.Logger;
 import org.springframework.cloud.bus.BusProperties;
-import org.springframework.cloud.bus.ServiceMatcher;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -45,7 +40,7 @@ import java.util.concurrent.TimeUnit;
  * TODO: Query Metrics
  **/
 @Service
-public class QueryExecutor extends QueryRemoteRequestEventListener implements QueryRequestHandler {
+public class QueryExecutor implements QueryRequestHandler {
     private static final Logger log = Logger.getLogger(QueryExecutor.class);
     
     protected final BlockingQueue<Runnable> workQueue;
@@ -58,15 +53,13 @@ public class QueryExecutor extends QueryRemoteRequestEventListener implements Qu
     protected final BusProperties busProperties;
     protected final ThreadPoolExecutor threadPool;
     protected final ApplicationContext appCtx;
-    protected final ServiceMatcher serviceMatcher;
     protected final ApplicationEventPublisher publisher;
     protected final AccumuloConnectionFactory connectionFactory;
     protected final AccumuloConnectionRequestMap connectionRequestMap = new AccumuloConnectionRequestMap();
     
     public QueryExecutor(ExecutorProperties executorProperties, QueryProperties queryProperties, BusProperties busProperties, ApplicationContext appCtx,
-                    ServiceMatcher serviceMatcher, AccumuloConnectionFactory connectionFactory, QueryStorageCache cache, QueryQueueManager queues,
-                    QueryLogicFactory queryLogicFactory, ApplicationEventPublisher publisher) {
-        super(serviceMatcher);
+                    AccumuloConnectionFactory connectionFactory, QueryStorageCache cache, QueryQueueManager queues, QueryLogicFactory queryLogicFactory,
+                    ApplicationEventPublisher publisher) {
         this.executorProperties = executorProperties;
         this.queryProperties = queryProperties;
         this.busProperties = busProperties;
@@ -74,7 +67,6 @@ public class QueryExecutor extends QueryRemoteRequestEventListener implements Qu
         this.queues = queues;
         this.queryLogicFactory = queryLogicFactory;
         this.appCtx = appCtx;
-        this.serviceMatcher = serviceMatcher;
         this.connectionFactory = connectionFactory;
         this.publisher = publisher;
         this.workQueue = new LinkedBlockingDeque<>(executorProperties.getMaxQueueSize());
@@ -91,7 +83,6 @@ public class QueryExecutor extends QueryRemoteRequestEventListener implements Qu
                 working.remove(r);
             }
         };
-        addListener(this);
         log.info("Created QueryExecutor with an application name of " + appCtx.getApplicationName() + " and an id of " + appCtx.getId());
     }
     

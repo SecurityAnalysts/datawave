@@ -1,0 +1,27 @@
+# This is where you set properties that are common to all executors
+
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.bootstrap.config: DEBUG
+    datawave.query: DEBUG
+    datawave.microservice.query: DEBUG
+
+warehouse:
+  accumulo:
+    zookeepers: '${accumulo.zookeepers}'
+    instanceName: '${accumulo.instanceName}'
+    username: '${accumulo.username}'
+    password: '${accumulo.password}'
+
+datawave:
+  table:
+    cache:
+      zookeepers: '${accumulo.zookeepers}'
+      tableNames:
+        - '${warehouse.tables.metadata.name}'
+      poolName: 'default'
+      reloadInterval: 360000
+      evictionReaperIntervalInSeconds: 360
+      numLocks: 3
+      maxRetries: 3
