@@ -35,7 +35,7 @@ public class QueryRemoteRequestEventListener implements ApplicationListener<Remo
             log.debug("Dropping {} since it is from us.", event);
             return;
         }
-
+        
         // process the event using each query request handler.
         // By default, for parallelStreams java uses threads equal to the number of cores.
         // if we need more than that, we can specify our own ForkJoinPool.

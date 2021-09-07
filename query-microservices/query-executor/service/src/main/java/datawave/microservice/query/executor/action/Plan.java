@@ -16,7 +16,6 @@ import datawave.webservice.query.Query;
 import datawave.webservice.query.QueryImpl;
 import datawave.webservice.query.runner.AccumuloConnectionRequestMap;
 import org.apache.accumulo.core.client.Connector;
-import org.apache.accumulo.server.Accumulo;
 import org.apache.log4j.Logger;
 import org.springframework.cloud.bus.BusProperties;
 import org.springframework.context.ApplicationEventPublisher;
