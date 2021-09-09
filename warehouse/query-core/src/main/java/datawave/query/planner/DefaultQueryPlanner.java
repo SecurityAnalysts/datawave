@@ -26,6 +26,7 @@ import datawave.query.exceptions.DoNotPerformOptimizedQueryException;
 import datawave.query.exceptions.EmptyUnfieldedTermExpansionException;
 import datawave.query.exceptions.FullTableScansDisallowedException;
 import datawave.query.exceptions.InvalidQueryException;
+import datawave.query.exceptions.InvalidQueryTreeException;
 import datawave.query.exceptions.NoResultsException;
 import datawave.query.function.JexlEvaluation;
 import datawave.query.index.lookup.IndexStream.StreamContext;
@@ -85,6 +86,7 @@ import datawave.query.jexl.visitors.UniqueExpressionTermsVisitor;
 import datawave.query.jexl.visitors.UnmarkedBoundedRangeDetectionVisitor;
 import datawave.query.jexl.visitors.ValidComparisonVisitor;
 import datawave.query.jexl.visitors.ValidPatternVisitor;
+import datawave.query.jexl.visitors.validate.ASTValidator;
 import datawave.query.model.QueryModel;
 import datawave.query.planner.comparator.DefaultQueryPlanComparator;
 import datawave.query.planner.comparator.GeoWaveQueryPlanComparator;
@@ -283,6 +285,11 @@ public class DefaultQueryPlanner extends QueryPlanner implements Cloneable {
      */
     protected boolean showReducedQueryPrune = true;
     
+    /**
+     * Set flag to enable query tree validation during planning
+     */
+    protected boolean validateAST = false;
+    
     // handles boilerplate operations that surround a visitor's execution (e.g., timers, logging, validating)
     protected TimedVisitorManager visitorManager;
     
@@ -297,7 +304,7 @@ public class DefaultQueryPlanner extends QueryPlanner implements Cloneable {
     public DefaultQueryPlanner(long maxRangesPerQueryPiece, boolean limitScanners) {
         this.maxRangesPerQueryPiece = maxRangesPerQueryPiece;
         setLimitScanners(limitScanners);
-        this.visitorManager = new TimedVisitorManager(log.isDebugEnabled(), false);
+        this.visitorManager = new TimedVisitorManager(log.isDebugEnabled(), validateAST);
     }
     
     protected DefaultQueryPlanner(DefaultQueryPlanner other) {
@@ -2326,7 +2333,11 @@ public class DefaultQueryPlanner extends QueryPlanner implements Cloneable {
                 }
                 
                 if (validateAst) {
-                    // do nothing for now
+                    try {
+                        ASTValidator.isValid(script);
+                    } catch (InvalidQueryTreeException e) {
+                        throw new DatawaveQueryException(e);
+                    }
                 }
             } finally {
                 stopwatch.stop();
@@ -2339,7 +2350,11 @@ public class DefaultQueryPlanner extends QueryPlanner implements Cloneable {
             ASTJexlScript script = visitorManager.apply();
             
             if (validateAst) {
-                // do nothing for now
+                try {
+                    ASTValidator.isValid(script);
+                } catch (InvalidQueryTreeException e) {
+                    throw new DatawaveQueryException(e);
+                }
             }
             
             return script;
@@ -2641,6 +2656,14 @@ public class DefaultQueryPlanner extends QueryPlanner implements Cloneable {
     
     public boolean isShowReducedQueryPrune() {
         return showReducedQueryPrune;
+    }
+    
+    public boolean getValidateAST() {
+        return this.validateAST;
+    }
+    
+    public void setValidateAST(boolean validateAST) {
+        this.validateAST = validateAST;
     }
     
     public static int getMaxChildNodesToPrint() {
