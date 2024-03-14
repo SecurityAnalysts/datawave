@@ -153,7 +153,7 @@
             <!-- This is needed in order to submit MapReduce jobs. -->
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
-            <version>1.9.13</version>
+            <version>1.9.13-cloudera.1</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
