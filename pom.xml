@@ -39,7 +39,7 @@
         <version.commons-codec>1.12</version.commons-codec>
         <version.commons-collections>4.3</version.commons-collections>
         <version.commons-configuration>1.10</version.commons-configuration>
-        <version.commons-configuration2>2.7</version.commons-configuration2>
+        <version.commons-configuration2>2.10.1</version.commons-configuration2>
         <version.commons-io>2.6</version.commons-io>
         <version.commons-jexl>2.1.1</version.commons-jexl>
         <version.commons-lang>2.6</version.commons-lang>
@@ -48,7 +48,7 @@
         <version.curator>2.13.0</version.curator>
         <version.deltaspike>1.9.0</version.deltaspike>
         <version.easymock>4.0.2</version.easymock>
-        <version.geoserver>2.14.2</version.geoserver>
+        <version.geoserver>2.23.5</version.geoserver>
         <version.geotools>20.1</version.geotools>
         <version.geowave>1.1.0</version.geowave>
         <version.google-guava>15.0</version.google-guava>
@@ -92,7 +92,7 @@
         <version.objenesis>2.1</version.objenesis>
         <version.picketbox>5.0.3.Final</version.picketbox>
         <version.powermock>2.0.2</version.powermock>
-        <version.protobuf>2.5.0</version.protobuf>
+        <version.protobuf>3.16.3</version.protobuf>
         <version.protostuff>1.6.2</version.protostuff>
         <version.slf4j>1.7.26</version.slf4j>
         <version.spotify-dns>3.1.5</version.spotify-dns>
